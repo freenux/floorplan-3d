@@ -1,0 +1,65 @@
+const fs = require('node:fs');
+const vm = require('node:vm');
+const assert = require('node:assert/strict');
+const path = require('node:path');
+const root = path.resolve(__dirname,'..');
+const html = fs.readFileSync(path.join(root,'index.html'),'utf8');
+const ctx = vm.createContext({assert, console});
+vm.runInContext(html.slice(html.indexOf('const WALLS ='),html.indexOf('const PX_MM =')),ctx);
+vm.runInContext('const BOUNDS={}; let state;',ctx);
+for (const level of [1,2]) {
+  const text = fs.readFileSync(path.join(root,`plans/plan-floor${level}.json`),'utf8');
+  ctx.planText = text;
+  vm.runInContext(`{
+    state=fixState(JSON.parse(planText));
+    assert.equal(state.metadata.floor,${level});
+    assert.equal(applyGeometry(),true);
+    assert.equal(applyGeometry(),false);
+    assert.equal(ROOMS.length,state.geometry.rooms.length);
+    assert.equal(WALLS.length,state.geometry.walls.length);
+    assert(BOUNDS.w>12000 && BOUNDS.h>11800);
+    const exported=JSON.stringify(state);
+    state=fixState(JSON.parse(exported));
+    applyGeometry();
+    assert.equal(JSON.stringify(state),exported);
+    const invalid=JSON.parse(exported); invalid.geometry.rooms[0].poly[0][0]='bad';
+    assert.throws(()=>fixState(invalid));
+    const invalidWall=JSON.parse(exported); invalidWall.geometry.walls[0][2]=-200;
+    assert.throws(()=>fixState(invalidWall));
+    const invalidFurn=JSON.parse(exported); invalidFurn.furniture[0].w=-1;
+    assert.throws(()=>fixState(invalidFurn));
+    state=defaultState(); applyGeometry();
+    assert.equal(ROOMS[0].id,'master');
+    assert.equal(state.geometry,undefined);
+    state=fixState({furniture:[]}); applyGeometry();
+    assert.equal(ROOMS[0].id,'master');
+    assert.equal(state.rooms.master.name,'主卧室');
+  }`,ctx);
+}
+ctx.floorOne = fs.readFileSync(path.join(root,'plans/plan-floor1.json'),'utf8');
+ctx.floorTwo = fs.readFileSync(path.join(root,'plans/plan-floor2.json'),'utf8');
+vm.runInContext(`{
+  const wrongWall=[0,11700,8000,11900,'low'];
+  const old=JSON.parse(floorOne); delete old.metadata.geometryRevision;
+  old.furniture[0].cx=3210; old.rooms.bed_nw.mat='walnut';
+  // Place the legacy wall before an edited interior wall to exercise ID remapping.
+  const interior=old.geometry.walls.findIndex(w=>w[4]==='n');
+  old.geometry.walls.splice(interior,0,wrongWall);
+  old.demolished=['w'+interior,'w'+(interior+1)];
+  const repaired=fixState(old);
+  assert.equal(repaired.furniture[0].cx,3210);
+  assert.equal(repaired.rooms.bed_nw.mat,'walnut');
+  assert.equal(repaired.metadata.geometryRevision,1);
+  assert.equal(repaired.geometry.walls.some(w=>JSON.stringify(w)===JSON.stringify(wrongWall)),false);
+  assert.equal(repaired.demolished.length,1);
+  assert.equal(repaired.demolished[0],'w'+interior);
+  const once=JSON.stringify(repaired); assert.equal(JSON.stringify(fixState(repaired)),once);
+  const upper=JSON.parse(floorTwo); delete upper.metadata.geometryRevision;
+  const walls=JSON.stringify(upper.geometry.walls);
+  assert.equal(JSON.stringify(fixState(upper).geometry.walls),walls);
+  const other=JSON.parse(floorOne); delete other.metadata.geometryRevision;
+  other.metadata.source='other.pdf'; other.geometry.walls.push(wrongWall);
+  assert.equal(fixState(other).geometry.walls.at(-1)[4],'low');
+}`,ctx);
+console.log('PASS: legacy porch correction preserves edits, remaps wall IDs, is idempotent, and leaves other floors/plans intact');
+console.log('PASS: both floor imports, geometry refresh, export/reimport, default reset, legacy JSON, malformed input rejection');

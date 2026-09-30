@@ -153,6 +153,23 @@ main.animating #hint3d{opacity:0}
 .menu-pop{position:absolute;right:0;top:calc(100% + 6px);display:flex;flex-direction:column;min-width:150px;background:#fff;
   border:1px solid var(--line);border-radius:10px;padding:4px;box-shadow:0 10px 30px rgba(40,30,20,.14);z-index:20;animation:fadeIn .2s ease}
 .menu-pop .btn{text-align:left}
+#planMenu summary{display:flex;align-items:center;gap:7px;max-width:220px;background:var(--accent-soft);border-color:#dfc5b2;color:var(--accent)}
+#planCurrentName{max-width:150px;overflow:hidden;text-overflow:ellipsis;white-space:nowrap}
+.plan-pop{width:320px;max-width:calc(100vw - 28px);padding:12px}
+.plan-pop-head{display:flex;align-items:center;justify-content:space-between;padding:2px 4px 10px;font-size:13px;font-weight:600}
+.plan-pop-head small{color:var(--muted);font-size:11px;font-weight:400}
+#planList{max-height:320px;overflow:auto;display:flex;flex-direction:column;gap:5px}
+.plan-item{display:flex;align-items:center;gap:10px;width:100%;padding:11px;border:1px solid transparent;background:#faf8f5;border-radius:8px;text-align:left;cursor:pointer}
+.plan-item:hover{background:#f2ece2;border-color:var(--line)}
+.plan-item[aria-current="true"]{background:var(--accent-soft);border-color:#dfc5b2}
+.plan-item .plan-mark{display:grid;place-items:center;flex-shrink:0;width:28px;height:28px;border:1px solid var(--line);border-radius:7px;color:var(--muted);font-size:12px}
+.plan-item[aria-current="true"] .plan-mark{background:var(--accent);border-color:var(--accent);color:white}
+.plan-item .plan-info{min-width:0;flex:1}
+.plan-item .plan-name{display:block;font-size:13px;font-weight:600;overflow:hidden;text-overflow:ellipsis;white-space:nowrap}
+.plan-item small{display:block;margin-top:4px;font-size:11px;color:var(--muted)}
+.plan-pop-foot{border-top:1px solid var(--line);margin-top:10px;padding-top:10px;display:flex;align-items:center;gap:10px}
+.plan-pop-foot small{min-width:0;flex:1;font-size:10px;color:var(--muted);line-height:1.5}
+@media(max-width:700px){#planMenu summary{max-width:170px}#planCurrentName{max-width:100px}}
 .range span{font-variant-numeric:tabular-nums;color:var(--ink)}
 /* ---------- 选中后的浮动工具条 ---------- */
 #fab{position:absolute;left:50%;bottom:16px;transform:translate(-50%,12px);display:flex;align-items:center;gap:4px;padding:5px;
@@ -279,7 +296,15 @@ main.drawer-panel #fab{opacity:0;visibility:hidden}
     <div class="spacer"></div>
     <button class="btn" id="langBtn" title="Switch language / 切换语言" style="border:1px solid var(--line);background:#fff">EN</button>
     <button class="btn" id="fullscreen" title="全屏 (Shift+F)" style="border:1px solid var(--line);background:#fff">⛶ 全屏</button>
-    <details class="menu"><summary class="btn" data-en="File ▾">文件 ▾</summary>
+    <details class="menu" id="planMenu">
+      <summary class="btn" title="打开方案列表" data-en-title="Open saved plans"><span data-en="Plans">方案</span><span id="planCurrentName"></span><span aria-hidden="true">▾</span></summary>
+      <div class="menu-pop plan-pop">
+        <div class="plan-pop-head"><span data-en="Saved plans">方案列表</span><small id="planCount"></small></div>
+        <div id="planList" role="group" aria-label="已保存方案"></div>
+        <div class="plan-pop-foot"><button class="btn primary" id="importFromPlans" data-en="＋ Import plan">＋ 导入方案</button><small data-en="Edits are saved before switching. Stored in this browser.">切换自动保存 · 当前浏览器</small></div>
+      </div>
+    </details>
+    <details class="menu" id="fileMenu"><summary class="btn" data-en="File ▾">文件 ▾</summary>
       <div class="menu-pop">
         <button class="btn" id="exportPng" data-en="Export image">导出图片</button>
         <button class="btn" id="exportJson" data-en="Export plan JSON">导出方案 JSON</button>
@@ -337,6 +362,7 @@ main.drawer-panel #fab{opacity:0;visibility:hidden}
 </div>
 <div id="toast"></div>
 
+<script type="application/json" id="bundledPlans">[{"id":"plan-floor1","name":"plan-floor1","state":{"format":"floorplan-3d","version":2,"metadata":{"geometryRevision":1,"name":"plan-floor1","source":"设计图.pdf","sourcePage":7,"sourceSheet":"JS-04","sourceScale":"1:100","floor":1,"sourceBuildingAreaM2":138.4,"sourceFloorElevationMm":0,"accuracy":"dimension-calibrated-manual-reconstruction","notes":["扫描图人工重建；轴线尺寸按原图标注，未标尺寸按图估算。","坐标单位毫米；原点为轴线1/A，x向右，y向下。墙体按轴线中心及200mm估算墙厚。","门窗净宽、分隔墙偏移、家具尺寸及位置为估算，不能用于施工放样。","未判断承重墙，n仅为编辑器内部墙体类型，不代表实际可拆。","楼梯为示意模型，不含楼板洞口、扶手、精确层高或可步行上下楼功能；3D沿用项目2.8m展示高度。","各楼层分别导入，不包含叠层模型或屋顶；二楼右上角为屋顶示意，未当作房间。","图纸建筑面积含墙体等，项目统计为重建平面净面积（含门廊/露台），口径不同。","地面材质为展示用默认值，不是原图材料说明。","一楼上中房原文为卧室，但符号为圆餐桌，保留原图名称并注明图示。","一楼门廊前缘为开放边界，不生成矮墙或围栏。"]},"geometry":{"walls":[[0,-100,1150,100,"e"],[2950,-100,5150,100,"e"],[6950,-100,9150,100,"e"],[10950,-100,12000,100,"e"],[-100,0,100,4000,"e"],[-100,5100,100,11800,"e"],[11900,0,12100,3800,"e"],[11900,4800,12100,11000,"e"],[3900,100,4100,2750,"n"],[3900,3650,4100,3900,"n"],[100,3800,4100,4000,"n"],[3900,3900,4100,4100,"n"],[3900,5100,4100,5500,"n"],[100,5400,4100,5600,"n"],[7900,100,8100,600,"n"],[7900,1600,8100,3000,"n"],[7900,2900,11900,3100,"n"],[3900,5500,4100,5700,"n"],[3900,6700,4100,9500,"n"],[100,9400,900,9600,"n"],[2900,9400,4800,9600,"n"],[7200,9400,8000,9600,"n"],[7900,9500,8100,11800,"e"],[7900,10900,12000,11100,"e"]],"windows":[[1150,-100,2950,100],[5150,-100,6950,100],[9150,-100,10950,100],[-100,4100,100,5000],[11900,3800,12100,4800],[900,9400,2900,9600]],"doors":[{"name":"上左卧室门","rect":[3900,2750,4100,3650],"h":[4000,3650],"c":[0,-1],"o":[-1,0],"len":900},{"name":"卫生间门","rect":[3900,4100,4100,5100],"h":[4000,5100],"c":[0,-1],"o":[-1,0],"len":1000},{"name":"厨房门","rect":[7900,600,8100,1600],"h":[8000,1600],"c":[0,-1],"o":[1,0],"len":1000},{"name":"下左卧室门","rect":[3900,5700,4100,6700],"h":[4000,6700],"c":[0,-1],"o":[-1,0],"len":1000},{"name":"入户门左扇","rect":[4800,9400,6000,9600],"h":[4800,9500],"c":[1,0],"o":[0,-1],"len":1200,"entry":true},{"name":"入户门右扇","rect":[6000,9400,7200,9600],"h":[7200,9500],"c":[-1,0],"o":[0,-1],"len":1200,"entry":true}],"slides":[],"rooms":[{"id":"bed_nw","name":"卧室（上左）","poly":[[100,100],[3900,100],[3900,3800],[100,3800]],"mat":"wood","at":[2000.0,1950.0],"outdoor":false},{"id":"bath","name":"卫生间","poly":[[100,4000],[3900,4000],[3900,5400],[100,5400]],"mat":"antislip","at":[2000.0,4700.0],"outdoor":false},{"id":"north_middle","name":"卧室（图示餐桌）","poly":[[4100,100],[7900,100],[7900,3000],[4100,3000]],"mat":"tile800","at":[6000.0,1550.0],"outdoor":false},{"id":"kitchen","name":"厨房","poly":[[8100,100],[11900,100],[11900,2900],[8100,2900]],"mat":"antislip","at":[10000.0,1500.0],"outdoor":false},{"id":"stair","name":"楼梯间","poly":[[8100,3100],[11900,3100],[11900,5400],[8100,5400]],"mat":"tile600","at":[10000.0,4250.0],"outdoor":false},{"id":"hall","name":"过厅","poly":[[4100,3000],[8000,3000],[8000,5400],[4100,5400]],"mat":"tile800","at":[6050.0,4200.0],"outdoor":false},{"id":"bed_sw","name":"卧室（下左）","poly":[[100,5600],[3900,5600],[3900,9400],[100,9400]],"mat":"wood","at":[2000.0,7500.0],"outdoor":false},{"id":"living","name":"客厅","poly":[[4100,5600],[11900,5600],[11900,9400],[4100,9400]],"mat":"tile800","at":[8000.0,7500.0],"outdoor":false},{"id":"living_south","name":"客厅南侧","poly":[[8100,9400],[11900,9400],[11900,10900],[8100,10900]],"mat":"tile800","at":[10000.0,10150.0],"outdoor":false},{"id":"porch","name":"门廊","poly":[[100,9600],[7900,9600],[7900,11700],[100,11700]],"mat":"tile600","at":[4000.0,10650.0],"outdoor":true}],"stairs":[{"rect":[8000,4350,10600,5350],"steps":9,"reverse":false,"baseHeight":0,"height":1.4},{"rect":[8000,3150,10600,4150],"steps":9,"reverse":true,"baseHeight":1.4,"height":1.4}],"dimensions":[{"horizontal":true,"at":-750,"start":0,"segments":[4000,4000,4000]},{"horizontal":true,"at":-1250,"start":0,"segments":[12000]},{"horizontal":false,"at":-800,"start":0,"segments":[3900,1600,4000,1500,800]},{"horizontal":false,"at":-1400,"start":0,"segments":[11800]},{"horizontal":false,"at":12800,"start":0,"segments":[3000,2500,5500,800]}],"walkStart":{"position":[6000,10900],"target":[6000,7000]}},"furniture":[{"id":"f1_1","type":"bed","name":"双人床","cx":1300,"cy":1950,"w":1800,"d":2000,"rot":270,"color":"#c9d6df"},{"id":"f1_2","type":"nightstand","name":"床头柜","cx":450,"cy":650,"w":550,"d":500,"rot":0,"color":"#e2cfb4"},{"id":"f1_3","type":"nightstand","name":"床头柜","cx":450,"cy":3250,"w":550,"d":500,"rot":0,"color":"#e2cfb4"},{"id":"f1_4","type":"bed","name":"双人床","cx":1300,"cy":7300,"w":1800,"d":2000,"rot":270,"color":"#c9d6df"},{"id":"f1_5","type":"nightstand","name":"床头柜","cx":450,"cy":6000,"w":550,"d":500,"rot":0,"color":"#e2cfb4"},{"id":"f1_6","type":"nightstand","name":"床头柜","cx":450,"cy":8600,"w":550,"d":500,"rot":0,"color":"#e2cfb4"},{"id":"f1_7","type":"wardrobe","name":"衣柜","cx":3500,"cy":1500,"w":2000,"d":600,"rot":90,"color":"#efe6d8"},{"id":"f1_8","type":"wardrobe","name":"衣柜","cx":3500,"cy":8400,"w":1800,"d":600,"rot":90,"color":"#efe6d8"},{"id":"f1_9","type":"toilet","name":"马桶","cx":650,"cy":4550,"w":400,"d":700,"rot":0,"color":"#ffffff"},{"id":"f1_10","type":"vanity","name":"洗手盆","cx":3450,"cy":5100,"w":700,"d":450,"rot":0,"color":"#e2cfb4"},{"id":"f1_11","type":"roundtable","name":"餐桌（按图示）","cx":6000,"cy":1700,"w":1600,"d":1600,"rot":0,"color":"#e2cfb4"},{"id":"f1_12","type":"chair","name":"餐椅","cx":7100,"cy":1700,"w":450,"d":480,"rot":90,"color":"#e2cfb4"},{"id":"f1_13","type":"chair","name":"餐椅","cx":6778,"cy":2478,"w":450,"d":480,"rot":135,"color":"#e2cfb4"},{"id":"f1_14","type":"chair","name":"餐椅","cx":6000,"cy":2800,"w":450,"d":480,"rot":180,"color":"#e2cfb4"},{"id":"f1_15","type":"chair","name":"餐椅","cx":5222,"cy":2478,"w":450,"d":480,"rot":225,"color":"#e2cfb4"},{"id":"f1_16","type":"chair","name":"餐椅","cx":4900,"cy":1700,"w":450,"d":480,"rot":270,"color":"#e2cfb4"},{"id":"f1_17","type":"chair","name":"餐椅","cx":5222,"cy":922,"w":450,"d":480,"rot":315,"color":"#e2cfb4"},{"id":"f1_18","type":"chair","name":"餐椅","cx":6000,"cy":600,"w":450,"d":480,"rot":0,"color":"#e2cfb4"},{"id":"f1_19","type":"chair","name":"餐椅","cx":6778,"cy":922,"w":450,"d":480,"rot":45,"color":"#e2cfb4"},{"id":"f1_20","type":"counter","name":"厨房台面","cx":10000,"cy":450,"w":3300,"d":600,"rot":0,"color":"#e9e5de"},{"id":"f1_21","type":"counter","name":"厨房台面","cx":11550,"cy":1750,"w":2300,"d":600,"rot":90,"color":"#e9e5de"},{"id":"f1_22","type":"stove","name":"燃气灶","cx":10600,"cy":450,"w":750,"d":450,"rot":0,"color":"#e2cfb4"},{"id":"f1_23","type":"ksink","name":"厨房水槽","cx":11550,"cy":1550,"w":800,"d":450,"rot":90,"color":"#e2cfb4"},{"id":"f1_24","type":"sofa","name":"三人沙发","cx":9900,"cy":10450,"w":2700,"d":800,"rot":0,"color":"#b7c4b0"},{"id":"f1_25","type":"armchair","name":"单人沙发","cx":11600,"cy":10300,"w":650,"d":650,"rot":0,"color":"#e2cfb4"},{"id":"f1_26","type":"armchair","name":"单人沙发","cx":8500,"cy":9500,"w":650,"d":850,"rot":0,"color":"#e2cfb4"},{"id":"f1_27","type":"coffeetable","name":"茶几","cx":9900,"cy":9500,"w":1000,"d":600,"rot":0,"color":"#e2cfb4"},{"id":"f1_28","type":"tvstand","name":"电视柜","cx":9900,"cy":5800,"w":2300,"d":350,"rot":0,"color":"#e2cfb4"}],"rooms":{"bed_nw":{"name":"卧室（上左）","mat":"wood"},"bath":{"name":"卫生间","mat":"antislip"},"north_middle":{"name":"卧室（图示餐桌）","mat":"tile800"},"kitchen":{"name":"厨房","mat":"antislip"},"stair":{"name":"楼梯间","mat":"tile600"},"hall":{"name":"过厅","mat":"tile800"},"bed_sw":{"name":"卧室（下左）","mat":"wood"},"living":{"name":"客厅","mat":"tile800"},"living_south":{"name":"客厅南侧","mat":"tile800"},"porch":{"name":"门廊","mat":"tile600"}},"demolished":[],"measures":[]}},{"id":"plan-floor2","name":"plan-floor2","state":{"format":"floorplan-3d","version":2,"metadata":{"geometryRevision":1,"name":"plan-floor2","source":"设计图.pdf","sourcePage":8,"sourceSheet":"JS-05","sourceScale":"1:100","floor":2,"sourceBuildingAreaM2":114.06,"sourceFloorElevationMm":4100,"accuracy":"dimension-calibrated-manual-reconstruction","notes":["扫描图人工重建；轴线尺寸按原图标注，未标尺寸按图估算。","坐标单位毫米；原点为轴线1/A，x向右，y向下。墙体按轴线中心及200mm估算墙厚。","门窗净宽、分隔墙偏移、家具尺寸及位置为估算，不能用于施工放样。","未判断承重墙，n仅为编辑器内部墙体类型，不代表实际可拆。","楼梯为示意模型，不含楼板洞口、扶手、精确层高或可步行上下楼功能；3D沿用项目2.8m展示高度。","各楼层分别导入，不包含叠层模型或屋顶；二楼右上角为屋顶示意，未当作房间。","图纸建筑面积含墙体等，项目统计为重建平面净面积（含门廊/露台），口径不同。","地面材质为展示用默认值，不是原图材料说明。"]},"geometry":{"walls":[[0,-100,1150,100,"e"],[2950,-100,5150,100,"e"],[6950,-100,9150,100,"e"],[10950,-100,12000,100,"e"],[-100,0,100,4000,"e"],[11900,0,12100,3800,"e"],[11900,4800,12100,11000,"e"],[3900,100,4100,2750,"n"],[3900,3650,4100,3900,"n"],[100,3800,4100,4000,"n"],[3900,3900,4100,4100,"n"],[3900,5100,4100,5500,"n"],[100,5400,4100,5600,"n"],[7900,100,8100,600,"n"],[7900,1600,8100,3000,"n"],[7900,2900,11900,3100,"n"],[3900,5500,4100,5700,"n"],[3900,6700,4100,8500,"n"],[100,8400,900,8600,"n"],[2900,8400,4800,8600,"n"],[7200,8400,8000,8600,"n"],[8000,5400,11900,5600,"n"],[7900,5500,8100,5600,"n"],[7900,6600,8100,11000,"n"],[8000,10900,9000,11100,"e"],[10900,10900,12000,11100,"e"],[7900,11000,8100,11800,"low"],[0,11700,8000,11900,"low"],[-100,5100,100,8500,"e"],[-100,8500,100,11800,"low"]],"windows":[[1150,-100,2950,100],[5150,-100,6950,100],[9150,-100,10950,100],[-100,4100,100,5000],[11900,3800,12100,4800],[900,8400,2900,8600],[9000,10900,10900,11100]],"doors":[{"name":"上左卧室门","rect":[3900,2750,4100,3650],"h":[4000,3650],"c":[0,-1],"o":[-1,0],"len":900},{"name":"卫生间门","rect":[3900,4100,4100,5100],"h":[4000,5100],"c":[0,-1],"o":[-1,0],"len":1000},{"name":"书房门","rect":[7900,600,8100,1600],"h":[8000,1600],"c":[0,-1],"o":[1,0],"len":1000},{"name":"下左卧室门","rect":[3900,5700,4100,6700],"h":[4000,6700],"c":[0,-1],"o":[-1,0],"len":1000},{"name":"露台门左扇","rect":[4800,8400,6000,8600],"h":[4800,8500],"c":[1,0],"o":[0,-1],"len":1200,"entry":false},{"name":"露台门右扇","rect":[6000,8400,7200,8600],"h":[7200,8500],"c":[-1,0],"o":[0,1],"len":1200},{"name":"下右卧室门","rect":[7900,5600,8100,6600],"h":[8000,6600],"c":[0,-1],"o":[1,0],"len":1000}],"slides":[],"rooms":[{"id":"bed_nw","name":"卧室（上左）","poly":[[100,100],[3900,100],[3900,3800],[100,3800]],"mat":"wood","at":[2000.0,1950.0],"outdoor":false},{"id":"bath","name":"卫生间","poly":[[100,4000],[3900,4000],[3900,5400],[100,5400]],"mat":"antislip","at":[2000.0,4700.0],"outdoor":false},{"id":"north_middle","name":"客厅北侧空间","poly":[[4100,100],[7900,100],[7900,3000],[4100,3000]],"mat":"tile800","at":[6000.0,1550.0],"outdoor":false},{"id":"study","name":"书房","poly":[[8100,100],[11900,100],[11900,2900],[8100,2900]],"mat":"wood","at":[10000.0,1500.0],"outdoor":false},{"id":"stair","name":"楼梯间","poly":[[8100,3100],[11900,3100],[11900,5400],[8100,5400]],"mat":"tile600","at":[10000.0,4250.0],"outdoor":false},{"id":"hall","name":"过厅","poly":[[4100,3000],[8000,3000],[8000,5400],[4100,5400]],"mat":"tile800","at":[6050.0,4200.0],"outdoor":false},{"id":"bed_sw","name":"卧室（下左）","poly":[[100,5600],[3900,5600],[3900,8400],[100,8400]],"mat":"wood","at":[2000.0,7000.0],"outdoor":false},{"id":"living","name":"客厅","poly":[[4100,5600],[7900,5600],[7900,8400],[4100,8400]],"mat":"tile800","at":[6000.0,7000.0],"outdoor":false},{"id":"bed_se","name":"卧室（下右）","poly":[[8100,5600],[11900,5600],[11900,10900],[8100,10900]],"mat":"wood","at":[10000.0,8250.0],"outdoor":false},{"id":"terrace","name":"露台","poly":[[100,8600],[7900,8600],[7900,11700],[100,11700]],"mat":"antislip","at":[4000.0,10150.0],"outdoor":true}],"stairs":[{"rect":[8000,4350,10600,5350],"steps":9,"reverse":false,"baseHeight":0,"height":1.4},{"rect":[8000,3150,10600,4150],"steps":9,"reverse":true,"baseHeight":1.4,"height":1.4}],"dimensions":[{"horizontal":true,"at":-750,"start":0,"segments":[4000,4000,4000]},{"horizontal":true,"at":-1250,"start":0,"segments":[12000]},{"horizontal":false,"at":-800,"start":0,"segments":[3900,1600,3000,2500,800]},{"horizontal":false,"at":-1400,"start":0,"segments":[11800]},{"horizontal":false,"at":12800,"start":0,"segments":[3000,2500,5500,800]}],"walkStart":{"position":[5900,7300],"target":[5900,4000]}},"furniture":[{"id":"f2_1","type":"bed","name":"双人床","cx":1300,"cy":1950,"w":1500,"d":2000,"rot":270,"color":"#c9d6df"},{"id":"f2_2","type":"nightstand","name":"床头柜","cx":450,"cy":650,"w":550,"d":500,"rot":0,"color":"#e2cfb4"},{"id":"f2_3","type":"nightstand","name":"床头柜","cx":450,"cy":3250,"w":550,"d":500,"rot":0,"color":"#e2cfb4"},{"id":"f2_4","type":"bed","name":"双人床","cx":1300,"cy":7050,"w":1500,"d":2000,"rot":270,"color":"#c9d6df"},{"id":"f2_5","type":"nightstand","name":"床头柜","cx":450,"cy":5750,"w":550,"d":500,"rot":0,"color":"#e2cfb4"},{"id":"f2_6","type":"nightstand","name":"床头柜","cx":450,"cy":8350,"w":550,"d":500,"rot":0,"color":"#e2cfb4"},{"id":"f2_7","type":"wardrobe","name":"衣柜","cx":3500,"cy":1500,"w":2000,"d":600,"rot":90,"color":"#efe6d8"},{"id":"f2_8","type":"wardrobe","name":"衣柜","cx":3500,"cy":7400,"w":1800,"d":600,"rot":90,"color":"#efe6d8"},{"id":"f2_9","type":"toilet","name":"马桶","cx":650,"cy":4550,"w":400,"d":700,"rot":0,"color":"#ffffff"},{"id":"f2_10","type":"vanity","name":"洗手盆","cx":3450,"cy":5100,"w":700,"d":450,"rot":0,"color":"#e2cfb4"},{"id":"f2_11","type":"bed","name":"双人床","cx":10500,"cy":8050,"w":1800,"d":2000,"rot":90,"color":"#c9d6df"},{"id":"f2_12","type":"nightstand","name":"床头柜","cx":11500,"cy":6750,"w":550,"d":500,"rot":0,"color":"#e2cfb4"},{"id":"f2_13","type":"nightstand","name":"床头柜","cx":11500,"cy":9350,"w":550,"d":500,"rot":0,"color":"#e2cfb4"},{"id":"f2_14","type":"wardrobe","name":"衣柜","cx":8500,"cy":10000,"w":1800,"d":600,"rot":90,"color":"#efe6d8"}],"rooms":{"bed_nw":{"name":"卧室（上左）","mat":"wood"},"bath":{"name":"卫生间","mat":"antislip"},"north_middle":{"name":"客厅北侧空间","mat":"tile800"},"study":{"name":"书房","mat":"wood"},"stair":{"name":"楼梯间","mat":"tile600"},"hall":{"name":"过厅","mat":"tile800"},"bed_sw":{"name":"卧室（下左）","mat":"wood"},"living":{"name":"客厅","mat":"tile800"},"bed_se":{"name":"卧室（下右）","mat":"wood"},"terrace":{"name":"露台","mat":"antislip"}},"demolished":[],"measures":[]}}]</script>
 <script>
 /* ======================= 多语言（中文 / English，默认中文） ======================= */
 const LANG_KEY = 'huxing-lang';
@@ -526,21 +552,116 @@ function defaultFurniture(){ return [
   F('armchair','休闲椅',11180,8880,750,750,180,'#d6b99a'), F('plant','绿植',11550,10250,500,500),
 ];}
 
+const DEFAULT_GEOMETRY = JSON.parse(JSON.stringify({walls:WALLS, windows:WINS, doors:DOORS, slides:SLIDES, rooms:ROOMS}));
+let activeGeometry;
+
+function validateGeometry(g){
+  const point = p => Array.isArray(p) && p.length === 2 && p.every(v => Number.isFinite(v) && Math.abs(v) < 1000000);
+  const rect = r => Array.isArray(r) && r.length >= 4 && point(r.slice(0,2)) && point(r.slice(2,4)) && r[2] > r[0] && r[3] > r[1];
+  if (!g || !Array.isArray(g.rooms) || !g.rooms.length || !Array.isArray(g.walls) || !Array.isArray(g.windows) || !Array.isArray(g.doors) || !Array.isArray(g.slides)) throw Error('Invalid geometry');
+  const ids = new Set();
+  for (const r of g.rooms){
+    if (!r || typeof r.id !== 'string' || !/^[a-zA-Z0-9_-]+$/.test(r.id) || ids.has(r.id) || typeof r.name !== 'string' || !Array.isArray(r.poly) || r.poly.length < 3 || !r.poly.every(point) || !Object.hasOwn(MATS,r.mat) || (r.at && !point(r.at))) throw Error('Invalid room');
+    ids.add(r.id);
+  }
+  if (!g.walls.every(w => rect(w) && ['b','e','n','low'].includes(w[4])) || !g.windows.every(rect) || !g.slides.every(d => rect(d.rect) && typeof d.v === 'boolean')) throw Error('Invalid wall or window');
+  if (!g.doors.every(d => rect(d.rect) && point(d.h) && point(d.c) && point(d.o) && Math.abs(Math.hypot(...d.c)-1) < .001 && Math.abs(Math.hypot(...d.o)-1) < .001 && Number.isFinite(d.len) && d.len > 0)) throw Error('Invalid door');
+  if (g.stairs && (!Array.isArray(g.stairs) || !g.stairs.every(t => rect(t.rect) && Number.isInteger(t.steps) && t.steps >= 2 && t.steps <= 40 && typeof t.reverse === 'boolean' && (t.baseHeight === undefined || (Number.isFinite(t.baseHeight) && t.baseHeight >= 0)) && (t.height === undefined || (Number.isFinite(t.height) && t.height > 0))))) throw Error('Invalid stairs');
+  if (g.dimensions && (!Array.isArray(g.dimensions) || !g.dimensions.every(d => typeof d.horizontal === 'boolean' && Number.isFinite(d.at) && Number.isFinite(d.start) && Array.isArray(d.segments) && d.segments.length && d.segments.every(v => Number.isFinite(v) && v > 0)))) throw Error('Invalid dimensions');
+  if (g.walkStart && (!point(g.walkStart.position) || !point(g.walkStart.target))) throw Error('Invalid walk start');
+}
+
+function applyGeometry(){
+  const g = state.geometry || DEFAULT_GEOMETRY;
+  if (activeGeometry === g) return false;
+  WALLS.splice(0,WALLS.length,...g.walls); WINS.splice(0,WINS.length,...g.windows);
+  DOORS.splice(0,DOORS.length,...g.doors); SLIDES.splice(0,SLIDES.length,...g.slides); ROOMS.splice(0,ROOMS.length,...g.rooms);
+  if (state.geometry){
+    const points = g.rooms.flatMap(r => r.poly).concat(g.walls.flatMap(w => [[w[0],w[1]],[w[2],w[3]]]));
+    const xs = points.map(p=>p[0]), ys = points.map(p=>p[1]);
+    Object.assign(BOUNDS,{x:Math.min(...xs)-1900,y:Math.min(...ys)-1900,w:Math.max(...xs)-Math.min(...xs)+3800,h:Math.max(...ys)-Math.min(...ys)+3800});
+  } else Object.assign(BOUNDS,{x:-1850,y:-1750,w:15600,h:14100});
+  activeGeometry = g;
+  return true;
+}
+
 function defaultState(){
-  const rooms = {}; ROOMS.forEach(r => rooms[r.id] = {name:r.name, mat:r.mat});
+  const rooms = {}; DEFAULT_GEOMETRY.rooms.forEach(r => rooms[r.id] = {name:r.name, mat:r.mat});
   return {furniture:defaultFurniture(), rooms, demolished:[], measures:[]};
 }
 
 const STORE = 'huxing-design-v1';
+const PLANS_STORE = 'huxing-plan-list-v1';
 function load(){
   try { const s = JSON.parse(localStorage.getItem(STORE)); if (s && Array.isArray(s.furniture)) return fixState(s); } catch(e) {}
   return null;
 }
+function isScannedFloorPlan(metadata){
+  return [1,2].includes(metadata?.floor) && typeof metadata.source === 'string' && metadata.source.endsWith('设计图.pdf') && metadata.sourceSheet === (metadata.floor === 1 ? 'JS-04' : 'JS-05');
+}
 function fixState(s){
-  const d = defaultState();
-  s.rooms = Object.assign(d.rooms, s.rooms || {});
-  s.demolished = s.demolished || []; s.measures = s.measures || [];
+  if (!s || !Array.isArray(s.furniture)) throw Error('Invalid furniture');
+  if (s.geometry) validateGeometry(s.geometry);
+  if (isScannedFloorPlan(s.metadata)){
+    s.metadata.source = '设计图.pdf';
+    if (typeof s.metadata.name === 'string' && /设计图 · [12]楼$/.test(s.metadata.name)) s.metadata.name = `plan-floor${s.metadata.floor}`;
+  }
+  // 修复早期扫描图重建中误加的门廊矮墙，保留家具、材质和其他墙体修改。
+  if (s.geometry && isScannedFloorPlan(s.metadata) && s.metadata.floor === 1 && !(s.metadata.geometryRevision >= 1)){
+    const removed = new Set();
+    s.geometry.walls.forEach((w,i) => { if (w.length === 5 && w.every((v,k) => v === [0,11700,8000,11900,'low'][k])) removed.add(i); });
+    s.geometry.walls = s.geometry.walls.filter((w,i) => !removed.has(i));
+    if (Array.isArray(s.demolished)) s.demolished = s.demolished.flatMap(id => {
+      if (typeof id !== 'string' || !/^w\d+$/.test(id)) return [];
+      const i = +id.slice(1); if (removed.has(i)) return [];
+      return ['w'+(i-[...removed].filter(j => j < i).length)];
+    });
+    s.metadata.geometryRevision = 1;
+  }
+  const geometry = s.geometry || DEFAULT_GEOMETRY, rooms = {};
+  for (const r of geometry.rooms){
+    const supplied = s.rooms?.[r.id];
+    rooms[r.id] = {name:typeof supplied?.name === 'string' ? supplied.name : r.name, mat:Object.hasOwn(MATS,supplied?.mat) ? supplied.mat : r.mat};
+  }
+  const types = new Set(LIB.flatMap(c => c.items.map(i => i[0]))), ids = new Set();
+  for (const f of s.furniture){
+    if (!f || typeof f.id !== 'string' || !/^[a-zA-Z0-9_-]+$/.test(f.id) || ids.has(f.id) || !types.has(f.type) || typeof f.name !== 'string' || ![f.cx,f.cy,f.w,f.d,f.rot].every(Number.isFinite) || f.w <= 0 || f.d <= 0 || !/^#[0-9a-f]{6}$/i.test(f.color)) throw Error('Invalid furniture');
+    ids.add(f.id);
+  }
+  s.rooms = rooms;
+  s.demolished = Array.isArray(s.demolished) ? s.demolished.filter(id => /^w\d+$/.test(id) && geometry.walls[+id.slice(1)] && ['n','low'].includes(geometry.walls[+id.slice(1)][4])) : [];
+  s.measures = s.measures || [];
+  if (!Array.isArray(s.measures) || !s.measures.every(m => m?.a && m?.b && [m.a.x,m.a.y,m.b.x,m.b.y].every(Number.isFinite))) throw Error('Invalid measures');
   return s;
+}
+
+// 方案列表保存完整快照；工作状态与列表中的快照分开，避免方案互相影响。
+const copyPlan = s => JSON.parse(JSON.stringify(s));
+function loadPlanCatalog(){
+  try {
+    const saved = JSON.parse(localStorage.getItem(PLANS_STORE));
+    if (saved?.version === 1 && Array.isArray(saved.plans)){
+      const ids = new Set(), plans = [];
+      for (const p of saved.plans){
+        try {
+          if (!p || typeof p.id !== 'string' || ids.has(p.id) || typeof p.name !== 'string' || !p.name.trim()) continue;
+          const state = fixState(p.state);
+          const floor = state.metadata?.floor;
+          const name = isScannedFloorPlan(state.metadata) && /设计图 · [12]楼$/.test(p.name) ? `plan-floor${floor}` : p.name;
+          plans.push({id:p.id,name,state}); ids.add(p.id);
+        } catch(e) {}
+      }
+      if (plans.length) return {version:1,activeId:ids.has(saved.activeId) ? saved.activeId : plans[0].id,plans};
+    }
+  } catch(e) {}
+  let plans = [];
+  try { plans = JSON.parse(document.getElementById('bundledPlans').textContent).map(p => ({...p,state:fixState(p.state)})); } catch(e) {}
+  const current = load() || defaultState();
+  const matched = current.metadata?.source && plans.find(p => p.state.metadata?.source === current.metadata.source && p.state.metadata?.floor === current.metadata.floor);
+  if (matched){ matched.state = current; return {version:1,activeId:matched.id,plans}; }
+  const id = 'previous-plan';
+  plans.unshift({id,name:current.metadata?.name || (current.geometry ? tr('上次方案','Previous plan') : tr('默认方案','Default plan')),state:current});
+  return {version:1,activeId:id,plans};
 }
 
 const PX_MM = 25.4 / 96;                       // 1 CSS px = 0.2646 mm
@@ -553,13 +674,71 @@ const svg = $('#plan');
 
 
 /* ======================= 状态 / 历史 / 存储 ======================= */
-let state = load() || defaultState();
+let planCatalog = loadPlanCatalog();
+let activePlanId = planCatalog.activeId;
+let state = copyPlan(planCatalog.plans.find(p => p.id === activePlanId).state);
+const planHistories = new Map();
 const ui = {tool:'select', sel:null, mA:null, mCur:null,
   layers:{dims:true, labels:true, furn:true, grid:false, bearing:false, wallSnap:true}};
 let view = {x0:0, y0:0, s:.06};
 const undoStack = [], redoStack = [];
 
-function save(){ try { localStorage.setItem(STORE, JSON.stringify(state)); } catch(e) {} }
+function persistCatalog(next){
+  try { localStorage.setItem(PLANS_STORE,JSON.stringify(next)); return true; }
+  catch(e){ toast(tr('浏览器存储空间不足或不可用，请导出 JSON 备份当前修改', 'Browser storage is full or unavailable. Export JSON to back up your edits.')); return false; }
+}
+function save(){
+  const current = planCatalog.plans.find(p => p.id === activePlanId);
+  current.state = copyPlan(state);
+  planCatalog.activeId = activePlanId;
+  if (!persistCatalog(planCatalog)) return false;
+  // 保留旧存储键兼容旧版，但方案列表是新版的恢复来源。
+  try { localStorage.setItem(STORE,JSON.stringify(state)); } catch(e) {}
+  return true;
+}
+function activatePlan(id){
+  if (id === activePlanId) return;
+  const target = planCatalog.plans.find(p => p.id === id);
+  if (!target || !save()) return;
+  const next = {...planCatalog,activeId:id};
+  if (!persistCatalog(next)) return;
+  planHistories.set(activePlanId,{undo:[...undoStack],redo:[...redoStack]});
+  planCatalog = next; activePlanId = id; state = copyPlan(target.state);
+  const history = planHistories.get(id);
+  undoStack.splice(0,undoStack.length,...(history?.undo || [])); redoStack.splice(0,redoStack.length,...(history?.redo || []));
+  ui.sel = null; ui.mA = null; ui.mCur = null;
+  $('#planMenu').open = false;
+  renderAll();
+  toast(tr(`已切换到「${target.name}」`,`Switched to "${target.name}"`));
+}
+function importPlan(s,filename){
+  const imported = fixState(s);
+  if (!save()) return false;
+  const base = (typeof imported.metadata?.name === 'string' && imported.metadata.name.trim()) || filename.replace(/\.json$/i,'') || tr('导入方案','Imported plan');
+  let name = base, n = 2;
+  while (planCatalog.plans.some(p => p.name === name)) name = `${base} (${n++})`;
+  const entry = {id:uid(),name,state:copyPlan(imported)};
+  const next = {...planCatalog,activeId:entry.id,plans:[...planCatalog.plans,entry]};
+  if (!persistCatalog(next)) return false;
+  planHistories.set(activePlanId,{undo:[...undoStack],redo:[...redoStack]});
+  planCatalog = next; activePlanId = entry.id; state = imported;
+  undoStack.length = 0; redoStack.length = 0;
+  ui.sel = null; ui.mA = null; ui.mCur = null;
+  save(); renderAll();
+  toast(tr('方案已导入并加入列表','Plan imported and added to the list'));
+  return true;
+}
+function renderPlanList(){
+  const current = planCatalog.plans.find(p => p.id === activePlanId);
+  $('#planCurrentName').textContent = current.name;
+  $('#planCount').textContent = tr(`${planCatalog.plans.length} 个方案`,`${planCatalog.plans.length} plans`);
+  $('#planList').setAttribute('aria-label',tr('已保存方案','Saved plans'));
+  $('#planList').innerHTML = planCatalog.plans.map((p,i) => {
+    const current = p.id === activePlanId, data = current ? state : p.state;
+    const count = (data.geometry?.rooms || DEFAULT_GEOMETRY.rooms).length;
+    return `<button class="plan-item" data-plan-id="${esc(p.id)}" aria-current="${current}" title="${esc(p.name)}"><span class="plan-mark" aria-hidden="true">${current ? '✓' : String(i+1).padStart(2,'0')}</span><span class="plan-info"><span class="plan-name">${esc(p.name)}</span><small>${tr(`${count} 个空间 · ${data.furniture.length} 件家具`,`${count} spaces · ${data.furniture.length} furniture items`)}</small></span></button>`;
+  }).join('');
+}
 const snap = () => JSON.stringify(state);
 function commit(before){ undoStack.push(before); if (undoStack.length > 150) undoStack.shift(); redoStack.length = 0; save(); }
 function mutate(fn){ const b = snap(); fn(); commit(b); renderAll(); }
@@ -766,9 +945,16 @@ function renderOpenings(){
     if (v){ const L = y1-y0, m = (x0+x1)/2; s += `<rect x="${m-45}" y="${y0}" width="40" height="${L*.55}" fill="#fff" ${DS}/><rect x="${m+5}" y="${y1-L*.55}" width="40" height="${L*.55}" fill="#fff" ${DS}/>`; }
     else { const L = x1-x0, m = (y0+y1)/2; s += `<rect x="${x0}" y="${m-45}" width="${L*.55}" height="40" fill="#fff" ${DS}/><rect x="${x1-L*.55}" y="${m+5}" width="${L*.55}" height="40" fill="#fff" ${DS}/>`; }
   });
-  // 入户标识
-  s += `<path d="M3350 8755H4350M4150 8600L4400 8755L4150 8910" fill="none" stroke="#b5653a" stroke-width="2" vector-effect="non-scaling-stroke"/>
+  // 原始户型的入户标识
+  if (!state.geometry) s += `<path d="M3350 8755H4350M4150 8600L4400 8755L4150 8910" fill="none" stroke="#b5653a" stroke-width="2" vector-effect="non-scaling-stroke"/>
         <text x="3380" y="8600" font-size="200" fill="#b5653a">${tr('入户','Entry')}</text>`;
+  (state.geometry?.stairs || []).forEach(t => {
+    const [x0,y0,x1,y1] = t.rect;
+    s += `<rect x="${x0}" y="${y0}" width="${x1-x0}" height="${y1-y0}" fill="#e4dfd7" ${DS}/>`;
+    for (let i=1;i<t.steps;i++){ const x=x0+(x1-x0)*i/t.steps; s += `<line x1="${x}" y1="${y0}" x2="${x}" y2="${y1}" ${DS}/>`; }
+    const ax=t.reverse?x1-100:x0+100, bx=t.reverse?x0+100:x1-100, y=(y0+y1)/2, dir=t.reverse?-1:1;
+    s += `<path d="M${ax} ${y}H${bx}m${-dir*150} -100l${dir*150} 100l${-dir*150} 100" fill="none" ${DS}/>`;
+  });
   $('#gOpen').innerHTML = s;
 }
 
@@ -795,7 +981,7 @@ function renderDims(){
     return s;
   };
   const g = $('#gDims');
-  g.innerHTML =
+  g.innerHTML = state.geometry ? (state.geometry.dimensions || []).map(d => chain(d.horizontal,d.at,d.start,d.segments)).join('') :
     chain(true,-750,0,[1580,240,2760,240,1540,240,3670]) + chain(true,-1250,0,[10270]) +
     chain(true,11350,0,[2180,240,2160,240,5450,240,1340]) + chain(true,11850,0,[11850]) +
     chain(false,-800,0,[3370,1580,240,2770,240,2360]) + chain(false,-1300,0,[10560]) +
@@ -852,13 +1038,17 @@ function renderSel(){
 }
 
 function renderAll(){
+  const geometryChanged = applyGeometry();
+  if (geometryChanged){ renderOpenings(); renderDims(); fitView(); }
   renderGrid(); renderRooms(); renderFurn(); renderWalls(); renderLabels(); renderMeasure(); renderSel(); renderPanel(); updateHeader();
   window.View3D?.sync();
 }
 
 function updateHeader(){
+  renderPlanList();
+  $('.brand b').textContent = state.geometry ? (planCatalog.plans.find(p => p.id === activePlanId)?.name || state.metadata?.name || tr('导入户型 · 装修设计','Imported plan · Interior Design')) : tr('三室两厅两卫 · 装修设计','3BR 2LR 2BA · Interior Design');
   const tot = ROOMS.filter(r => r.counted !== false).reduce((a,r) => a + area(r.poly), 0);
-  $('#subtitle').textContent = tr(`套内使用面积约 ${fmt(tot)} m² · 尺寸单位 mm · 原图比例 1:60`, `Net floor area ≈ ${fmt(tot)} m² · Units: mm · Original scale 1:60`);
+  $('#subtitle').textContent = state.geometry ? `${state.metadata?.name || tr('导入户型','Imported plan')} · ${tr('平面净面积约','Plan net area ≈')} ${fmt(tot)} m² · mm` : tr(`套内使用面积约 ${fmt(tot)} m² · 尺寸单位 mm · 原图比例 1:60`, `Net floor area ≈ ${fmt(tot)} m² · Units: mm · Original scale 1:60`);
   $('#undo').disabled = !undoStack.length; $('#redo').disabled = !redoStack.length;
   $('#undo').style.opacity = undoStack.length ? 1 : .4; $('#redo').style.opacity = redoStack.length ? 1 : .4;
 }
@@ -891,8 +1081,8 @@ function overviewPanel(){
   return `
   <section><h3>${tr('房间面积','Room Areas')} <small>${tr('点击查看 / 更换地面','Click to view / change flooring')}</small></h3>
     <table>${rows}</table>
-    <div class="total"><span>${tr('套内使用面积','Net floor area')}</span><b>${fmt(tot)} m²</b></div>
-    <div class="muted" style="font-size:11px;margin-top:4px">${tr('* 飘窗不计入使用面积；面积按墙体内净尺寸计算','* Bay windows are excluded; areas use net inner wall dimensions')}</div></section>
+    <div class="total"><span>${state.geometry ? tr('平面净面积（含室外空间）','Plan net area (including outdoor areas)') : tr('套内使用面积','Net floor area')}</span><b>${fmt(tot)} m²</b></div>
+    <div class="muted" style="font-size:11px;margin-top:4px">${state.geometry ? tr('按房间多边形估算，含门廊 / 露台；与建筑面积口径不同。','Estimated from room polygons including porch / terrace; differs from gross building area.') : tr('* 飘窗不计入使用面积；面积按墙体内净尺寸计算','* Bay windows are excluded; areas use net inner wall dimensions')}</div></section>
   <section><h3>${tr('地面材料估算','Flooring Estimate')} <small>${tr('含 5% 损耗','incl. 5% waste')}</small></h3>
     <table>${matRows}</table>
     <div class="total"><span>${tr('地面材料合计','Flooring total')}</span><b>¥${Math.round(cost).toLocaleString()}</b></div></section>
@@ -1457,18 +1647,22 @@ if (navigator.standalone || matchMedia('(display-mode: standalone)').matches) $(
 $('#tgLib').onclick = () => drawer('lib');
 $('#tgPanel').onclick = () => drawer('panel');
 // 触屏上点菜单以外的地方收起「文件」菜单
-document.addEventListener('pointerdown', e => { const m = $('details.menu'); if (m.open && !m.contains(e.target)) m.open = false; });
+document.addEventListener('pointerdown', e => { document.querySelectorAll('details.menu').forEach(m => { if (m.open && !m.contains(e.target)) m.open = false; }); });
+document.addEventListener('keydown', e => { if (e.key === 'Escape') document.querySelectorAll('details.menu').forEach(m => m.open = false); });
 matchMedia('(max-width:1100px)').addEventListener('change', () => drawer(null));
 drawer(null);                                  // 恢复上次的面板收起状态
 $('#exportPng').onclick = exportPNG;
 $('#exportJson').onclick = () => download(tr('户型装修方案', 'floor-plan-design') + '.json', new Blob([JSON.stringify(state, null, 2)], {type:'application/json'}));
 $('#importJson').onclick = () => $('#fileIn').click();
+$('#importFromPlans').onclick = () => $('#fileIn').click();
+$('#planList').onclick = e => { const button = e.target.closest('[data-plan-id]'); if (button) activatePlan(button.dataset.planId); };
+$('#planMenu').addEventListener('toggle', () => { if ($('#planMenu').open) renderPlanList(); });
 $('#fileIn').onchange = e => {
   const file = e.target.files[0]; if (!file) return;
   file.text().then(txt => {
-    try { const s = JSON.parse(txt); if (!Array.isArray(s.furniture)) throw 0; const b = snap(); state = fixState(s); ui.sel = null; commit(b); renderAll(); toast(tr('方案已导入', 'Plan imported')); }
+    try { importPlan(JSON.parse(txt),file.name); }
     catch(err){ toast(tr('文件格式不正确', 'Invalid file format')); }
-  });
+  }).catch(() => toast(tr('文件读取失败', 'Could not read file')));
   e.target.value = '';
 };
 $('#reset').onclick = () => { if (confirm(tr('恢复为默认设计方案？（可撤销）', 'Reset to the default design? (undoable)'))){ const b = snap(); state = defaultState(); ui.sel = null; commit(b); renderAll(); } };
@@ -1494,7 +1688,7 @@ $('#langBtn').onclick = () => setLang(LANG === 'en' ? 'zh' : 'en');
 applyStaticLang(); syncFullscreen();
 buildDefs(); buildLib(); renderOpenings(); renderDims();
 $('#tip').textContent = TIPS()['2d'];
-fitView(); renderAll();
+fitView(); renderAll(); save();
 </script>
 <script type="module">
 /* ============================================================
@@ -1512,7 +1706,7 @@ import {CSS2DRenderer, CSS2DObject} from 'three/addons/renderers/CSS2DRenderer.j
 
 const stage = $('#stage'), host = $('#view3d');
 const OX = 6000, OY = 5300, H = 2.8, FOV = 45;       // 户型中心放在世界原点，层高 2.8 m
-const wx = x => (x - OX) / 1000, wz = y => (y - OY) / 1000, M = v => v / 1000;
+const wx = x => (x - (state.geometry ? BOUNDS.x+BOUNDS.w/2 : OX)) / 1000, wz = y => (y - (state.geometry ? BOUNDS.y+BOUNDS.h/2 : OY)) / 1000, M = v => v / 1000;
 const SW = () => stage.clientWidth, SH = () => stage.clientHeight;
 const opt = {cut:2.8, furn:true, labels:true, night:false, hour:10, mode:'orbit'};
 
@@ -2289,10 +2483,10 @@ function buildArch(){
     if (bay){ fl.castShadow = true; archUp.add(fl); } else archFloor.add(fl);
     // 天花：法线朝下，只在室内仰视时可见
     const cg = new THREE.ShapeGeometry(shapeOf(r.poly, true)); cg.rotateX(Math.PI/2);
-    const ceil = new THREE.Mesh(cg, mat('#fbfaf7', {roughness:1})); ceil.position.y = H; ceil.visible = top >= H; archUp.add(ceil);
+    const ceil = new THREE.Mesh(cg, mat('#fbfaf7', {roughness:1})); ceil.position.y = H; ceil.visible = top >= H && !r.outdoor; archUp.add(ceil);
     if (r.at){
       const lamp = new THREE.Mesh(new THREE.CylinderGeometry(.22, .22, .02, 32), new THREE.MeshStandardMaterial({color:'#fff', emissive:'#fff2d6', emissiveIntensity:.3}));
-      lamp.position.set(wx(r.at[0]), H - .012, wz(r.at[1])); lamp.visible = top >= H; lampG.add(lamp);
+      lamp.position.set(wx(r.at[0]), H - .012, wz(r.at[1])); lamp.visible = top >= H && !r.outdoor; lampG.add(lamp);
       const pl = new THREE.PointLight(0xffd9a8, 0, 7, 1.6); pl.position.set(wx(r.at[0]), H - .25, wz(r.at[1])); lampG.add(pl);
     }
   });
@@ -2303,10 +2497,10 @@ function buildArch(){
     colliders.push([wx(w[0]), wz(w[1]), wx(w[2]), wz(w[3])]);
   });
   // 门洞、飘窗洞口上方过梁
-  [...DOORS.map(d => [d.rect, 2.1]), ...SLIDES.map(s => [s.rect, s.v ? 2.4 : 2.1]), [[10270,800,10510,2600], 2.4], [[10270,4260,10510,5740], 2.4]]
+  [...DOORS.map(d => [d.rect, 2.1]), ...SLIDES.map(s => [s.rect, s.v ? 2.4 : 2.1]), ...(!state.geometry ? [[[10270,800,10510,2600], 2.4], [[10270,4260,10510,5740], 2.4]] : [])]
     .forEach(([r, h]) => { if (top > h) wallBox(r, h, top); });
   WINS.forEach((r, i) => {
-    const sill = i === 0 ? 1.4 : i >= 6 ? .45 : .9, head = 2.4;
+    const sill = state.geometry ? .9 : i === 0 ? 1.4 : i >= 6 ? .45 : .9, head = 2.4;
     wallBox(r, 0, Math.min(sill, top)); if (top > head) wallBox(r, head, top);
     colliders.push([wx(r[0]), wz(r[1]), wx(r[2]), wz(r[3])]);
     const gTop = Math.min(head, top); if (gTop <= sill) return;
@@ -2337,6 +2531,14 @@ function buildArch(){
       [-1, 1].forEach(e => { const fr = new THREE.Mesh(new THREE.BoxGeometry(.04, ph, .04), frameMat); fr.position.set(v ? x : x + e*pl/2, ph/2, v ? z + e*pl/2 : z); archUp.add(fr); });
     });
   });
+  (state.geometry?.stairs || []).forEach(t => {
+    const [x0,y0,x1,y1] = t.rect, step=(x1-x0)/t.steps;
+    for (let i=0;i<t.steps;i++){
+      const h=(t.baseHeight || 0)+(t.reverse?t.steps-i:i+1)*(t.height || H)/t.steps;
+      if (h > top) continue;
+      archUp.add(box(M(step),h,M(y1-y0),mat('#d7cec0'),wx(x0+step*(i+.5)),h/2,wz((y0+y1)/2)));
+    }
+  });
   applyLight(); applyGrow();
 }
 
@@ -2366,7 +2568,7 @@ function buildLabels(){
 // 只重建变化的部分
 function sync(force){
   if (!inited || (!active && !force)) return;
-  const a = JSON.stringify([state.rooms, state.demolished, opt.cut]), f = JSON.stringify(state.furniture), l = JSON.stringify([state.rooms, opt.cut]);
+  const a = JSON.stringify([state.geometry, state.rooms, state.demolished, opt.cut]), f = JSON.stringify([state.geometry,state.furniture]), l = JSON.stringify([state.geometry, state.rooms, opt.cut]);
   if (force || a !== sigArch){ sigArch = a; buildArch(); }
   if (force || f !== sigFurn){ sigFurn = f; buildFurn(); }
   if (force || l !== sigLabels){ sigLabels = l; buildLabels(); }
@@ -2562,7 +2764,8 @@ function setMode(m){
     window.select(null);
     if (opt.cut < H){ opt.cut = H; syncCutBtns(); sync(); }
     orbit.enabled = false; fly = null;
-    camera.position.set(wx(4200), 1.6, wz(8755)); camera.lookAt(wx(7000), 1.5, wz(8755));   // 入户门外
+    const start = state.geometry?.walkStart || (state.geometry ? {position:ROOMS[0].at || ROOMS[0].poly[0],target:ROOMS.at(-1).at || ROOMS.at(-1).poly[0]} : {position:[4200,8755],target:[7000,8755]});
+    camera.position.set(wx(start.position[0]),1.6,wz(start.position[1])); camera.lookAt(wx(start.target[0]),1.5,wz(start.target[1]));
     $('#walkOverlay').style.display = 'flex';
     syncHint3d();
   } else {
