@@ -230,6 +230,7 @@ main.drawer-panel #fab{opacity:0;visibility:hidden}
   .brand span,footer .only2d{display:none!important}
 }
 </style>
+<link rel="stylesheet" href="shared/workspace.css">
 <script type="importmap">
 {"imports":{
   "three":"./vendor/three/three.module.js",
@@ -239,9 +240,20 @@ main.drawer-panel #fab{opacity:0;visibility:hidden}
 </head>
 <body>
 <div class="app">
-  <header>
+  <header class="workspace-header">
+    <div class="workspace-topbar">
+      <a class="workspace-brand" href="./">
+        <span class="workspace-mark" aria-hidden="true"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5"><path d="M3 21V9l9-6 9 6v12H3Z"/><path d="M9 21v-8h6v8M3 9h18"/></svg></span>
+        <span class="workspace-brand-copy"><b data-en="House Design Studio">住宅设计工作台</b><small data-en="Plan · Space · Facade">户型 · 空间 · 外观</small></span>
+      </a>
+      <nav class="workspace-nav" aria-label="设计工作区">
+        <a href="./" aria-current="page" data-en="Interior">室内设计</a>
+        <a href="exterior/" data-en="Exterior">外观设计</a>
+      </nav>
+      <span class="workspace-meta" data-en="Your design is saved in this browser">设计自动保存在当前浏览器</span>
+    </div>
+    <div class="workspace-toolbar">
     <div class="grp" id="paneBtns">
-      <a class="btn" href="exterior/" style="text-decoration:none;white-space:nowrap" data-en="Exterior">外观设计</a>
       <button class="btn chip" id="tgLib" data-en="◧ Library">◧ 家具库</button>
       <button class="btn chip" id="tgPanel" data-en="Properties ◨">属性 ◨</button>
     </div>
@@ -313,6 +325,7 @@ main.drawer-panel #fab{opacity:0;visibility:hidden}
         <button class="btn danger" id="reset" data-en="Reset to default">重置为默认方案</button>
       </div></details>
     <input type="file" id="fileIn" accept=".json,application/json" hidden>
+    </div>
   </header>
 
   <aside class="lib">

@@ -1,12 +1,101 @@
-<!doctype html><html lang="zh-CN"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1"><title>外观设计 · 临高自建房</title><link rel="stylesheet" href="style.css"><script type="importmap">{"imports":{"three":"../vendor/three/three.module.js","three/addons/":"../vendor/three/addons/"}}</script></head><body>
-<header><a href="../">室内户型</a><strong>外观设计 <small>临高 · 平屋顶方案</small></strong><button id="export" disabled>保存效果图</button></header>
-<main><section class="viewer" aria-label="可旋转的建筑外观三维模型"><div id="scene"></div><div id="loading" role="status">正在加载 3D 模型…</div><div class="scene-label">平屋顶 · 两层主体 · 屋顶楼堡</div><div class="views" aria-label="观察方向"><button data-view="perspective" class="active">整体</button><button data-view="front">正面</button><button data-view="left">左侧</button><button data-view="right">右侧</button><button data-view="back">背面</button><button data-view="top">屋顶</button></div><div class="hint">单指旋转 · 双指缩放 / 平移 <span>鼠标拖动旋转 · 滚轮缩放</span></div></section>
-<aside><h1>按实建主体设计</h1><p class="intro">严格沿用户型轮廓、门窗和前廊 / 露台；仅将坡屋顶改为平屋顶，并保留楼堡。</p><h2>配色方案</h2><div id="schemes"><button data-scheme="classic" class="scheme active"><i style="--a:#f2f1eb;--b:#a3a9ae"></i><span>01 简洁白灰<small>浅白墙面 / 灰色基座</small></span></button><button data-scheme="sand" class="scheme"><i style="--a:#e7dcc9;--b:#9b8874"></i><span>02 米白暖砂<small>米白墙面 / 暖砂色基座</small></span></button><button data-scheme="modern" class="scheme"><i style="--a:#d4dbdd;--b:#4d5961"></i><span>03 银灰深石<small>浅灰墙面 / 深灰重点面</small></span></button></div>
-<div class="colors"><label>主体墙色<input id="wallColor" type="color" value="#f2f1eb"></label><label>基座 / 重点面<input id="baseColor" type="color" value="#a3a9ae"></label><label>窗框 / 栏杆<input id="frameColor" type="color" value="#303940"></label></div><h2>细节与光照</h2><label class="toggle"><input id="lines" type="checkbox" checked>浅色横向装饰缝</label><label class="toggle"><input id="rail" type="checkbox" checked>露台栏杆效果</label><label class="toggle"><input id="auto" type="checkbox">自动环绕</label><label class="range">光照时段 <output id="sunLabel">午后</output><input id="sun" type="range" min="0" max="100" value="65"></label><button id="reset" class="reset">恢复白灰方案</button>
-<details open><summary>模型依据与待核对处</summary><p>正面体量和洞口参考施工照片；面宽约 12 m、进深约 11.8 m 参考现有户型。层高暂按 3.4 m，楼堡按照片估算。</p><p>墙体与门窗沿用现有户型坐标；不额外增加门窗。侧背面仍待现场核对，楼堡位置与尺寸需实测确认。栏杆、饰面、窗框和屋面矮墙为设计提案。仅供外观选色，不用于施工放样。</p></details></aside></main>
-<section class="references"><h2>结构依据</h2><p>模型沿用仓库内的两层户型数据：<a href="../plans/plan-floor1.json">一楼方案 JSON</a> · <a href="../plans/plan-floor2.json">二楼方案 JSON</a>。</p></section>
+<!doctype html>
+<html lang="zh-CN">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width,initial-scale=1,viewport-fit=cover">
+  <meta name="theme-color" content="#fffdf9">
+  <title>外观设计 · 住宅设计工作台</title>
+  <link rel="stylesheet" href="../shared/workspace.css">
+  <link rel="stylesheet" href="style.css">
+  <script type="importmap">{"imports":{"three":"../vendor/three/three.module.js","three/addons/":"../vendor/three/addons/"}}</script>
+</head>
+<body>
+<div class="exterior-app">
+  <header class="workspace-header">
+    <div class="workspace-topbar">
+      <a class="workspace-brand" href="../">
+        <span class="workspace-mark" aria-hidden="true"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5"><path d="M3 21V9l9-6 9 6v12H3Z"/><path d="M9 21v-8h6v8M3 9h18"/></svg></span>
+        <span class="workspace-brand-copy"><b data-en="House Design Studio">住宅设计工作台</b><small data-en="Plan · Space · Facade">户型 · 空间 · 外观</small></span>
+      </a>
+      <nav class="workspace-nav" aria-label="设计工作区">
+        <a href="../" data-en="Interior">室内设计</a>
+        <a href="./" aria-current="page" data-en="Exterior">外观设计</a>
+      </nav>
+      <span class="workspace-meta" data-en="Your design is saved in this browser">设计自动保存在当前浏览器</span>
+    </div>
+    <div class="workspace-toolbar">
+      <div class="brand"><b data-en="Lingao house · Exterior design">临高自建房 · 外观设计</b><span data-en="Flat roof · Two floors · Roof stair enclosure">平屋顶 · 两层主体 · 屋顶楼堡</span></div>
+      <div class="grp views" aria-label="观察方向">
+        <button class="btn active" data-view="perspective" data-en="Overview">整体</button>
+        <button class="btn" data-view="front" data-en="Front">正面</button>
+        <button class="btn" data-view="left" data-en="Left">左侧</button>
+        <button class="btn" data-view="right" data-en="Right">右侧</button>
+        <button class="btn" data-view="back" data-en="Back">背面</button>
+        <button class="btn" data-view="top" data-en="Roof">屋顶</button>
+      </div>
+      <div class="workspace-actions">
+        <button class="btn bordered" id="langBtn" title="Switch language / 切换语言">EN</button>
+        <button class="btn primary" id="export" data-en="Save image" disabled>保存效果图</button>
+      </div>
+    </div>
+  </header>
+  <main>
+    <section class="viewer" aria-label="可旋转的建筑外观三维模型">
+      <div id="scene"></div>
+      <div id="partLabel" class="part-label" role="status" aria-live="polite" hidden></div>
+      <div id="loading" role="status" data-en="Loading the 3D model…">正在加载 3D 模型…</div>
+      <div class="scene-label"><span class="scene-dot" aria-hidden="true"></span><span data-en="Exterior preview">外观预览</span><small data-en="600 mm eaves">二楼挑檐 60 cm</small></div>
+      <div class="hint"><span class="touch-hint" data-en="Tap to show names · Drag to rotate · Use two fingers to zoom or pan">轻点显示名称 · 单指旋转 · 双指缩放或平移</span><span class="mouse-hint" data-en="Hover to show names · Left drag: rotate · Right drag: pan · Scroll: zoom">悬停显示名称 · 左键旋转 · 右键平移 · 滚轮缩放</span></div>
+    </section>
+    <aside aria-label="外观设计设置">
+      <section class="panel-section panel-intro">
+        <span class="eyebrow" data-en="FACADE DESIGN">外观设计</span>
+        <h1 data-en="Exterior finishes">建筑外观与配色</h1>
+        <p class="intro" data-en="Use the existing floor plans to preview wall colors, railings and light.">基于现有两层户型，预览外墙配色、露台栏杆和光照效果。</p>
+      </section>
+      <section class="panel-section">
+        <h2 data-en="Color schemes">配色方案</h2>
+        <div id="schemes">
+          <button data-scheme="classic" class="scheme active"><i style="--a:#f2f1eb;--b:#a3a9ae"></i><span><b data-en="01 White and gray">01 简洁白灰</b><small data-en="White walls / Gray base">浅白墙面 / 灰色基座</small></span></button>
+          <button data-scheme="sand" class="scheme"><i style="--a:#e7dcc9;--b:#9b8874"></i><span><b data-en="02 Warm sand">02 米白暖砂</b><small data-en="Cream walls / Sand base">米白墙面 / 暖砂色基座</small></span></button>
+          <button data-scheme="modern" class="scheme"><i style="--a:#d4dbdd;--b:#4d5961"></i><span><b data-en="03 Gray and stone">03 银灰深石</b><small data-en="Light gray walls / Dark gray base">浅灰墙面 / 深灰重点面</small></span></button>
+        </div>
+        <div class="colors">
+          <label><span data-en="Main walls">主体墙色</span><input id="wallColor" type="color" value="#f2f1eb"></label>
+          <label><span data-en="Base / Accent surfaces">基座 / 重点面</span><input id="baseColor" type="color" value="#a3a9ae"></label>
+          <label><span data-en="Frames / Railings">窗框 / 栏杆</span><input id="frameColor" type="color" value="#303940"></label>
+        </div>
+      </section>
+      <section class="panel-section">
+        <h2 data-en="Details and light">细节与光照</h2>
+        <label class="toggle"><input id="lines" type="checkbox" checked><span data-en="Horizontal wall joints">横向装饰缝</span></label>
+        <label class="toggle"><input id="rail" type="checkbox" checked><span data-en="Terrace railings">露台栏杆</span></label>
+        <label class="toggle"><input id="auto" type="checkbox"><span data-en="Auto rotate">自动环绕</span></label>
+        <label class="range"><span data-en="Light">光照时段</span><output id="sunLabel">午后</output><input id="sun" type="range" min="0" max="100" value="65"></label>
+        <button id="reset" class="btn bordered reset" data-en="Reset to white and gray">恢复白灰方案</button>
+      </section>
+      <section class="panel-section">
+        <details>
+          <summary data-en="Model sources and dimensions to check">模型依据与待核对处</summary>
+          <p data-en="The completed structure photo and drawing pages 9–11 guide the model. Floor 1 has an open porch with two square columns and no projecting eaves. Floor 2 roof eaves project 600 mm. Drawing levels are 0.000 m, 4.100 m and 7.700 m. Column sections and trim are estimated from the scan. The roof stair enclosure is estimated from photos.">模型参考施工完成图及《符干文设计图》第 9–11 页。一楼为两根方柱支撑的开放门廊，无挑檐；二楼屋顶向外挑出 60 cm。图纸标高为一楼 0.000 m、二楼 4.100 m、屋顶楼板 7.700 m。柱截面、柱头和柱脚细节按扫描图估算，楼堡尺寸按照片估算。</p>
+          <p data-en="Walls, doors and windows use the existing plan coordinates. Side and rear faces, and the roof enclosure, need site measurements. Railings, finishes, frames and roof parapets are design proposals. Use this model for color selection only.">墙体与门窗沿用现有户型坐标。侧面、背面和楼堡的位置及尺寸需现场核对。栏杆、饰面、窗框和屋面矮墙为设计提案。模型仅供外观选色，不用于施工放样。</p>
+        </details>
+        <div class="references">
+          <h2 data-en="Floor plan sources">户型依据</h2>
+          <a href="../plans/plan-floor1.json" data-en="Floor 1 JSON ↗">一楼方案 JSON ↗</a>
+          <a href="../plans/plan-floor2.json" data-en="Floor 2 JSON ↗">二楼方案 JSON ↗</a>
+        </div>
+      </section>
+    </aside>
+  </main>
+  <footer><span><b data-en="Exterior design">外观设计</b><span data-en=" · Same floor plans as the interior workspace"> · 与室内设计共用户型</span></span><span data-en="Colors are saved in this browser">配色自动保存在当前浏览器</span></footer>
+</div>
+<script src="../shared/workspace.js"></script>
 <script type="module">
 const loading=document.getElementById('loading');
-const timer=setTimeout(()=>{if(!loading.hidden)loading.textContent='模型加载时间较长，请检查网络后重试。'},18000);
-import('./scene.js?v=3').then(()=>clearTimeout(timer)).catch(e=>{clearTimeout(timer);console.error(e);loading.hidden=false;loading.textContent='3D 启动失败：'+e.message+'。请刷新或更换支持 WebGL 的浏览器。';});
-</script></body></html>
+const showMessage=(zh,en)=>{loading.dataset.zh=zh;loading.dataset.en=en;loading.textContent=window.WorkspaceUI.tr(zh,en);};
+const timer=setTimeout(()=>{if(!loading.hidden)showMessage('模型加载时间较长，请检查网络后重试。','The model is taking longer to load. Check the network and try again.');},18000);
+import('./scene.js').then(()=>clearTimeout(timer)).catch(e=>{clearTimeout(timer);console.error(e);loading.hidden=false;showMessage('3D 启动失败，请刷新或使用支持 WebGL 的浏览器。','The 3D view could not start. Reload or use a browser with WebGL support.');});
+</script>
+</body>
+</html>
