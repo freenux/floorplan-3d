@@ -41,7 +41,7 @@ python3 -m http.server 8000
 # 访问 http://localhost:8000
 ```
 
-> Three.js 通过 jsDelivr CDN 加载，首次打开 3D 场景需要联网。
+> Three.js r160 与所需控件随网站托管，不依赖外部 CDN。请通过 HTTP 静态服务器运行，以便加载模块与户型 JSON。
 
 ## 快捷键
 
@@ -83,3 +83,11 @@ python3 -m http.server 8000
 
 方案 JSON 现在可以携带 `geometry`（墙体、门窗、房间多边形、尺寸链与楼梯示意），导入后作为新方案加入列表，包含户型结构和家具。旧方案 JSON 继续使用原始户型。
 本项目附带从扫描 PDF 人工标定重建的[plan-floor1 / plan-floor2 方案](plans/README.md)，打开「文件 → 导入方案」选择 `plans/` 中的 JSON 即可。
+
+## 外观设计
+
+首页点击「外观设计」或访问 `exterior/`。外观模型沿用两层户型数据，支持全方位旋转、视角切换、外墙配色、光照调整和 PNG 导出。平屋顶保留露天二楼露台，楼堡与竖向尺寸为待实测核对的示意。
+
+根目录可直接用于 GitHub Pages；`dist/` 为对应 Sites 静态发布文件，包含相同页面和资源。
+
+GitHub 版本仅包含页面代码、户型模型与运行依赖；施工照片及上传的参考图保留在原 Sites 页面，未公开至本仓库。

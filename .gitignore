@@ -26,3 +26,7 @@ tmp/
 
 # JPG 图片（不区分扩展名大小写）
 *.[jJ][pP][gG]
+
+# Sites static deployment assets
+!dist/
+!dist/**
